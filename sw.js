@@ -1,6 +1,6 @@
 // 맛집지도 서비스 워커: 앱 파일만 다룬다. 카카오 지도·검색은 건드리지 않는다.
 // 인터넷이 될 때는 항상 새 파일(네트워크 먼저), 안 될 때만 저장본으로 화면을 띄운다.
-var CACHE = 'matzip-v1';
+var CACHE = 'matzip-v2';
 var FILES = ['./', 'index.html', 'style.css', 'config.js', 'search.js', 'app.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 

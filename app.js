@@ -237,15 +237,25 @@
     hideCands();
     setBase();
     setStatus('내 위치 확인 중…');
-    navigator.geolocation.getCurrentPosition(function (pos) {
+    var got = function (pos) {
       if (!locGuard.isCurrent(lid)) return;
       S.me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
       S.center = { lat: S.me.lat, lng: S.me.lng, label: '내 위치', mode: 'me' };
       showMe();
       setBase(MS.isInaccurate(pos.coords.accuracy) ? MS.MESSAGES.locInaccurate : '');
       runSearch();
-    }, function (err) {
-      if (locGuard.isCurrent(lid)) onLocFail(err);
+    };
+    navigator.geolocation.getCurrentPosition(got, function (err) {
+      if (!locGuard.isCurrent(lid)) return;
+      // 실내 등에서 GPS가 늦으면(시간 초과) 와이파이·기지국 위치로 한 번 더
+      if (err && err.code === 3) {
+        setStatus('내 위치 확인 중… (조금 더 기다려요)');
+        navigator.geolocation.getCurrentPosition(got, function (err2) {
+          if (locGuard.isCurrent(lid)) onLocFail(err2);
+        }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+        return;
+      }
+      onLocFail(err);
     }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
   }
   function onLocFail(err) {
