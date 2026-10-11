@@ -1,0 +1,70 @@
+:root {
+  --bg: #fff; --fg: #1d1d1f; --sub: #6b7280; --line: #e5e7eb; --chip: #f3f4f6;
+  --on: #f97316; --onfg: #fff; --sel: #fff4ec; --warn: #b45309;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #111; --fg: #eee; --sub: #9ca3af; --line: #2a2a2a; --chip: #1f1f1f; --sel: #2a1a10; --warn: #fbbf24; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+  font-family: system-ui, -apple-system, "Malgun Gothic", sans-serif; }
+body { display: flex; flex-direction: column; height: 100dvh; }
+
+header { padding: 10px 12px 4px; border-bottom: 1px solid var(--line); padding-top: max(10px, env(safe-area-inset-top)); }
+.bar { display: flex; gap: 6px; margin: 0; }
+.bar input { flex: 1; min-width: 0; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line);
+  border-radius: 10px; background: var(--bg); color: var(--fg); }
+.bar button { font-size: 15px; padding: 0 12px; border: 0; border-radius: 10px; background: var(--chip); color: var(--fg); white-space: nowrap; }
+.bar button.main { background: var(--on); color: var(--onfg); }
+
+.cands { margin-top: 6px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.cands button { display: block; width: 100%; text-align: left; padding: 9px 12px; border: 0; border-bottom: 1px solid var(--line);
+  background: var(--bg); color: var(--fg); font-size: 15px; }
+.cands button:last-child { border-bottom: 0; }
+.cands small { display: block; color: var(--sub); font-size: 12px; }
+.cands .head { padding: 6px 12px; font-size: 12px; color: var(--sub); background: var(--chip); }
+
+.base { font-size: 13px; color: var(--sub); margin: 6px 2px 2px; }
+.base .warn { color: var(--warn); }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0 6px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips button { flex: none; font-size: 14px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 99px;
+  background: var(--chip); color: var(--fg); }
+.chips button.on { background: var(--on); border-color: var(--on); color: var(--onfg); }
+.chips .sep { flex: none; width: 1px; background: var(--line); margin: 0 2px; }
+.chips .hint { flex: none; align-self: center; font-size: 11px; color: var(--sub); }
+
+main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+#map { flex: 0 0 42%; min-height: 160px; background: #e8efe3; }
+#side { flex: 1; min-height: 0; overflow-y: auto; }
+.st { padding: 10px 14px; color: var(--sub); font-size: 13px; }
+.st button { margin-left: 6px; font-size: 13px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--chip); color: var(--fg); }
+.item { padding: 12px 14px; border-top: 1px solid var(--line); cursor: pointer; }
+.item.sel { background: var(--sel); }
+.item b { font-size: 16px; }
+.item .no { display: inline-block; min-width: 22px; color: var(--on); font-weight: 700; }
+.item .meta { font-size: 13px; color: var(--sub); margin-top: 3px; }
+.item .act { display: none; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.item.sel .act { display: flex; }
+.item .act a { font-size: 14px; padding: 7px 12px; border-radius: 8px; background: #fee500; color: #191919; text-decoration: none; }
+.item .act a.tel { background: var(--chip); color: var(--fg); }
+.foot { padding: 10px 14px 24px; margin: 0; font-size: 11px; color: var(--sub); border-top: 1px solid var(--line); }
+
+/* 지도 위 표시 */
+.pin { position: relative; bottom: 14px; min-width: 24px; height: 24px; padding: 0 5px; border-radius: 12px; background: #ef4444;
+  color: #fff; font: 700 12px/24px system-ui, sans-serif; text-align: center; border: 2px solid #fff;
+  box-shadow: 0 1px 3px #0006; cursor: pointer; }
+.pin::after { content: ""; position: absolute; left: 50%; bottom: -7px; margin-left: -5px; border: 5px solid transparent; border-top-color: #ef4444; }
+.pin.sel { background: var(--on); transform: scale(1.35); z-index: 5; }
+.pin.sel::after { border-top-color: var(--on); }
+.pin .nm { display: none; }
+.pin.sel .nm { display: inline; margin-left: 4px; font-weight: 600; }
+.me { width: 18px; height: 18px; border-radius: 50%; background: #2563eb; border: 3px solid #fff; box-shadow: 0 0 0 3px #2563eb55; }
+.center { width: 14px; height: 14px; border-radius: 50%; background: var(--on); border: 3px solid #fff; box-shadow: 0 0 0 3px #f9731655; }
+
+/* 폴드를 펼쳤을 때: 왼쪽 지도, 오른쪽 목록 */
+@media (min-width: 700px) {
+  main { flex-direction: row; }
+  #map { flex: 0 0 55%; min-height: 0; }
+  #side { border-left: 1px solid var(--line); }
+}
