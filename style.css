@@ -46,7 +46,12 @@ main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .item .meta { font-size: 13px; color: var(--sub); margin-top: 3px; }
 .item .act { display: none; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 .item.sel .act { display: flex; }
+.item .blog { font-size: 13px; color: var(--sub); margin-top: 3px; }
+.item .blog:not(:empty)::before { content: "📝 "; }
 .item .act a { font-size: 14px; padding: 7px 12px; border-radius: 8px; background: #fee500; color: #191919; text-decoration: none; }
+.item .act a.naver { background: #03c75a; color: #fff; }
+.item .act a.nblog { background: #e6f7ec; color: #027a3a; border: 1px solid #03c75a; }
+.item .act a.google { background: var(--bg); color: #1a73e8; border: 1px solid var(--line); }
 .item .act a.tel { background: var(--chip); color: var(--fg); }
 .foot { padding: 10px 14px 24px; margin: 0; font-size: 11px; color: var(--sub); border-top: 1px solid var(--line); }
 
