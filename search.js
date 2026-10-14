@@ -251,12 +251,39 @@
     return (string(place.name).trim() + (region ? ' ' + region : '')).trim();
   }
 
+  // 지번 주소에서 동네 낱말 앞의 마지막 시·군·구 낱말 ("경북 포항시 북구 죽도동" → "북구").
+  function siGunGu(addressName) {
+    var words = string(addressName).trim().split(/\s+/).slice(1);
+    var out = '';
+    for (var i = 0; i < words.length; i += 1) {
+      if (/[가-힣0-9](동|읍|면|가|리)$/.test(words[i])) break;
+      if (/[가-힣](구|군|시)$/.test(words[i])) out = words[i];
+    }
+    return out;
+  }
+
+  // 네이버 지도용 검색어: 카카오와 네이버의 지점 이름이 자주 달라서(죽전점↔죽전직영점)
+  // 마지막 '○○점' 낱말을 빼고 대신 구·동네로 가게를 가린다. 업종 낱말(홍콩반점 등)은 그대로.
+  var NOT_BRANCH = /(반점|주점|상점|매점|음식점|분식점|제과점|편의점|할인점|전문점|정육점)$/;
+  function naverMapQuery(place) {
+    if (!place) return '';
+    var addr = place.lotAddress || place.address;
+    var region = regionWord(addr);
+    var sgg = siGunGu(addr);
+    var words = string(place.name).trim().split(/\s+/).filter(Boolean);
+    var last = words[words.length - 1] || '';
+    var cut = (region || sgg) && words.length >= 2 && /.점$/.test(last) && !NOT_BRANCH.test(last);
+    if (!cut) return blogQuery(place);  // 지점 낱말이 없으면 구를 붙이지 않는다(붙이면 순위가 밀린 가게가 있었음)
+    words.pop();
+    return [sgg && sgg !== region ? sgg : '', words.join(' '), region].filter(Boolean).join(' ');
+  }
+
   function enc(s) { return encodeURIComponent(s); }
   function outLinks(place) {
     var q = blogQuery(place);
     var addr = string(place.address) || string(place.lotAddress);
     return {
-      naverMap: 'https://m.map.naver.com/search2/search.naver?query=' + enc(q),
+      naverMap: 'https://m.map.naver.com/search2/search.naver?query=' + enc(naverMapQuery(place)),
       blog: 'https://m.search.naver.com/search.naver?where=m_blog&query=' + enc(q) + '&nso=' + enc('so:dd,p:all'),
       google: 'https://www.google.com/maps/search/?api=1&query=' + enc((string(place.name) + ' ' + addr).trim())
     };
@@ -380,6 +407,8 @@
   return {
     regionWord: regionWord,
     blogQuery: blogQuery,
+    siGunGu: siGunGu,
+    naverMapQuery: naverMapQuery,
     outLinks: outLinks,
     normText: normText,
     nameParts: nameParts,
